@@ -39,6 +39,9 @@ Where `<project-id>` is derived from the current working directory by replacing 
 分析当前完整对话，提取以下信息：
 
 - **任务主题**：本次对话处理了什么问题/需求（1-2 句话）
+- **话题标签**：从以下固定话题表中选 2-4 个最相关的标签：
+  `#game-industry` `#ai-product` `#tools-workflow` `#personal-career` `#workspace-setup` `#research-analysis`
+  （可同时打多个标签；标签保持英文以便检索一致性）
 - **关键决策**：做出了哪些重要判断或方向选择
 - **输出成果**：创建/修改了哪些文件，得出了哪些结论
 - **可复用知识**：对未来工作有参考价值的洞察、框架或模式
@@ -48,8 +51,8 @@ Where `<project-id>` is derived from the current working directory by replacing 
 
 ## Step 3 — 检查记忆容量
 
-- 若当前 MEMORY.md **≤ 150 行**：直接追加摘要，跳至 Step 4
-- 若当前 MEMORY.md **> 150 行**：
+- 若当前 MEMORY.md **≤ 200 行**：直接追加摘要，跳至 Step 4
+- 若当前 MEMORY.md **> 200 行**：
 
   ### Step 3a — 归档旧内容
 
@@ -61,9 +64,9 @@ Where `<project-id>` is derived from the current working directory by replacing 
 
   ### Step 3b — 更新归档索引
 
-  从刚归档的内容中，提取所有以 `## [` 开头的 session 标题行（格式：`## [YYYY-MM-DD] 标题`）。
+  从刚归档的内容中，提取所有以 `## [` 开头的 session 标题行（格式：`## [YYYY-MM-DD] 标题`），以及紧随其后的 `**话题**：` 行中的标签。
 
-  将这些标题写入索引文件：
+  将这些标题+标签写入索引文件：
   `~/.claude/projects/<project-id>/memory/archive-index.md`
 
   **写入规则：**
@@ -74,13 +77,14 @@ Where `<project-id>` is derived from the current working directory by replacing 
     > 自动维护，按需读取。完整内容见 memory/archive/ 对应文件。
 
     ## YYYY-MM.md
-    - [YYYY-MM-DD] 标题1
-    - [YYYY-MM-DD] 标题2
+    - [YYYY-MM-DD] 标题1 | #tag1 #tag2
+    - [YYYY-MM-DD] 标题2 | #tag1
     ```
   - 若 `archive-index.md` **已存在**：
     - 检查文件中是否已有该月份的区块（`## YYYY-MM.md`）
     - 若无：在文件末尾追加新月份区块 + 条目
     - 若有：在该月份区块末尾追加新条目
+  - **标签格式**：若某条目有 `**话题**` 行，在标题后追加 ` | #tag1 #tag2`；若无则省略 `|` 部分（向后兼容旧格式）
 
 ---
 
@@ -91,6 +95,7 @@ Where `<project-id>` is derived from the current working directory by replacing 
 ```markdown
 ---
 ## [YYYY-MM-DD] <任务主题>
+**话题**：#tag1 #tag2
 
 **成果**：<输出成果>
 
