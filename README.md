@@ -1,16 +1,26 @@
 # summarize — Claude Code Skill
 
-A Claude Code skill that extracts key outcomes from your conversation and writes them to a long-term memory file, building a compounding knowledge base across sessions.
+A Claude Code skill that records **session deliverables** (files created/modified and cross-session decisions) to a long-term memory file, enabling reliable context restoration across sessions.
 
-## What it does
+## Design rationale
 
-Every time you finish meaningful work, run `/summarize` to:
+Claude Code already has a built-in auto-memory system that automatically captures behavioral patterns — user preferences, feedback corrections, project background, and external references. This skill focuses on what auto-memory does **not** capture: a chronological log of **what was built** and **what was decided** in each session.
 
-- Extract: task topic, key decisions, outputs, reusable insights, pending items
-- Write: structured entry to `~/.claude/projects/<project>/memory/MEMORY.md`
-- Archive: automatically rotates old entries when the file exceeds 150 lines
+| What auto-memory captures | What this skill captures |
+|---|---|
+| User preferences & habits | File deliverables (paths + summaries) |
+| Feedback & corrections | Cross-session decisions (what + why) |
+| Project background | Pending follow-ups |
+| External resource references | Session date & topic tags |
 
-No configuration needed — the memory file path is automatically inferred from your current working directory using Claude Code's project path convention.
+## When to use
+
+Run `/summarize` when the conversation produced:
+
+- **File outputs** — any files created or meaningfully modified
+- **Cross-session decisions** — architectural choices, direction changes, plan adjustments
+
+**Skip** for pure Q&A conversations with no file outputs and no decisions that affect future sessions. Claude will detect this and exit gracefully.
 
 ## Installation
 
@@ -18,7 +28,7 @@ No configuration needed — the memory file path is automatically inferred from 
 claude skill install https://github.com/Charpup/summarize
 ```
 
-Or manually copy `SKILL.md` into your Claude skills directory:
+Or manually:
 
 ```bash
 mkdir -p ~/.claude/skills/summarize
@@ -27,53 +37,43 @@ cp SKILL.md ~/.claude/skills/summarize/
 
 ## Usage
 
-After any conversation with substantive outputs, run:
-
 ```
 /summarize
 ```
 
-Claude will analyze the conversation, extract key information, and append a structured entry to your memory file.
+Claude analyzes the conversation, extracts file deliverables and key decisions, and appends a structured entry to your memory file.
 
-### When to use
+## Memory file location
 
-- After creating or modifying important files
-- After making architectural or design decisions
-- After completing research or competitive analysis
-- After any session where you'd want future-you to remember what happened
-
-### Memory file location
-
-The skill writes to:
+Writes to:
 ```
 ~/.claude/projects/<project-id>/memory/MEMORY.md
 ```
 
-Where `<project-id>` mirrors Claude Code's own project path convention (working directory path with separators replaced by `-`).
+`<project-id>` mirrors Claude Code's project path convention (working directory path with separators replaced by `-`).
 
-## Memory format
-
-Each summary entry follows this structure:
+## Entry format
 
 ```markdown
 ---
 ## [YYYY-MM-DD] Task Topic
+**话题**：#tag1 #tag2
 
-**成果**: What was created or concluded
+**文件产出**：
+- `path/to/file.md` — one-line description
+(omitted when no files were produced)
 
-**决策**: Key decisions made
+**决策**：Cross-session decisions made (omitted if none)
 
-**可复用**: Reusable insights or frameworks
-
-**待处理**: Pending follow-ups (omitted if none)
+**待处理**：Explicit follow-up items (omitted if none)
 ```
 
 ## Auto-archiving
 
-When `MEMORY.md` exceeds 150 lines:
+When `MEMORY.md` exceeds 200 lines:
 1. Lines 51+ are archived to `memory/archive/YYYY-MM.md`
-2. An index is maintained at `memory/archive-index.md`
-3. The main file is trimmed to keep it fast to load
+2. A searchable index is maintained at `memory/archive-index.md`
+3. The main file is trimmed to keep context loading fast
 
 ## License
 
