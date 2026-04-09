@@ -1,6 +1,22 @@
 ---
 name: summarize
-description: Summarize — Record session deliverables (files created/modified and cross-session decisions) to a long-term memory file. This skill should be used when the conversation has produced file outputs or decisions with cross-session impact. Skip for pure Q&A conversations. Trigger on "/summarize" command.
+description: >
+  Record session deliverables (files created/modified and cross-session decisions)
+  to a long-term memory file. Use when the conversation has produced file outputs
+  or decisions with cross-session impact. Skip for pure Q&A conversations.
+  Trigger on "/summarize" command or: 保存成果、归档本次对话、存入记忆、
+  记录这次的产出、写入长期记忆、保存决策。
+version: "1.1"
+triggers:
+  - "/summarize"
+  - "保存成果"
+  - "归档本次对话"
+  - "存入记忆"
+  - "记录这次的产出"
+  - "写入长期记忆"
+  - "保存决策"
+  - "save to memory"
+  - "summarize session"
 ---
 
 # Summarize — Session 交付物归档技能
